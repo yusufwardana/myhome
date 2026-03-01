@@ -1,6 +1,6 @@
 'use client';
 
-export default function Sidebar({ activePage, onNavigate, open }) {
+export default function Sidebar({ activePage, onNavigate, open, theme, onToggleTheme }) {
     const navItems = [
         { id: 'dashboard', icon: '📊', label: 'Dashboard' },
         { id: 'categories', icon: '📁', label: 'Kategori' },
@@ -43,9 +43,12 @@ export default function Sidebar({ activePage, onNavigate, open }) {
                 ))}
             </nav>
             <div className="sidebar-footer">
+                <button className="theme-toggle-btn" onClick={onToggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+                    <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
                 <div className="sidebar-footer-info">MoveBudget v2.0<br />© 2026</div>
             </div>
         </aside>
     );
 }
-

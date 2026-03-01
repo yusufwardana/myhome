@@ -1423,9 +1423,274 @@ table tbody tr.overbudget:hover {
   box-shadow: none !important;
 }
 
+/* 4-column actions grid */
+.admin-actions-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Database Info */
+.admin-db-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.admin-db-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-db-info-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.admin-db-info-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-db-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.admin-db-dot.connected {
+  background: var(--success);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.admin-db-dot.disconnected {
+  background: var(--danger);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+/* Settings Preview */
+.admin-settings-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.admin-settings-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-settings-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.admin-settings-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Activity Log */
+.admin-log-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-log-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition-fast);
+}
+
+.admin-log-item:last-child {
+  border-bottom: none;
+}
+
+.admin-log-item:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-log-icon {
+  font-size: 1.2rem;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.admin-log-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-log-action {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-log-detail {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.admin-log-time {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Bulk Items List */
+.admin-bulk-items-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+}
+
+.admin-bulk-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  font-size: 0.85rem;
+}
+
+.admin-bulk-item:last-child {
+  border-bottom: none;
+}
+
+.admin-bulk-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-bulk-item input[type="checkbox"] {
+  accent-color: var(--accent-primary);
+  width: 16px;
+  height: 16px;
+}
+
+.admin-bulk-item span:nth-child(2) {
+  flex: 1;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: var(--border-color-hover);
+}
+
+/* ======================== */
+/* LIGHT THEME              */
+/* ======================== */
+[data-theme="light"] {
+  --bg-primary: #f5f6fa;
+  --bg-secondary: #ebedf2;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fc;
+  --bg-input: #f0f1f5;
+  --bg-sidebar: #ffffff;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.3);
+  --text-primary: #1a1d2e;
+  --text-secondary: #5f6577;
+  --text-muted: #8a8fa3;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color-hover: rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="light"] .sidebar-logo .logo-text {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .admin-log-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .admin-bulk-item:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .kanban-column {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .theme-toggle-btn {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .theme-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .admin-status-item {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .admin-status-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .filter-select option,
+[data-theme="light"] .form-group select option {
+  background: #ffffff;
+}
+
 /* Admin responsive */
 @media (max-width: 768px) {
-  .admin-actions-grid {
+
+  .admin-actions-grid,
+  .admin-actions-grid-4 {
     grid-template-columns: 1fr;
   }
 
@@ -1437,10 +1702,26 @@ table tbody tr.overbudget:hover {
   .admin-status-grid {
     grid-template-columns: 1fr 1fr;
   }
+
+  .admin-db-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-settings-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-log-time {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
   .admin-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-db-info-grid {
     grid-template-columns: 1fr;
   }
 }

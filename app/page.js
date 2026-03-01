@@ -22,6 +22,23 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState('dark');
+
+  // Load theme from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('movebudget-theme');
+    if (saved) setTheme(saved);
+  }, []);
+
+  // Apply theme class to html element
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('movebudget-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  }, []);
 
   const showToast = useCallback((message, type = 'success') => {
     const id = Date.now();
@@ -60,7 +77,6 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      // Try to seed on first load
       try { await fetch('/api/seed', { method: 'POST' }); } catch { }
       await refreshData();
       setLoading(false);
@@ -81,7 +97,7 @@ export default function HomePage() {
     categories, items, loading,
     fetchCategories, fetchItems, refreshData,
     showToast, formatCurrency,
-    page, navigate,
+    page, navigate, theme,
   };
 
   return (
@@ -102,7 +118,7 @@ export default function HomePage() {
       )}
 
       <div className="app-layout">
-        <Sidebar activePage={page} onNavigate={navigate} open={sidebarOpen} />
+        <Sidebar activePage={page} onNavigate={navigate} open={sidebarOpen} theme={theme} onToggleTheme={toggleTheme} />
         <main className="main-content">
           {loading ? (
             <div className="loading-container"><div className="spinner" /></div>
@@ -121,3 +137,4 @@ export default function HomePage() {
     </AppContext.Provider>
   );
 }
+
