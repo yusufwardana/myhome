@@ -10,11 +10,13 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#14b8a6', '#a855f7', '#06b6d4'];
 
 export default function Dashboard() {
-    const { categories, items, formatCurrency, navigate } = useApp();
+    const { categories, items, settings, formatCurrency, navigate } = useApp();
 
-    const totalBudget = categories.reduce((s, c) => s + Number(c.budget_limit), 0);
+    const totalBudget = Number(settings.total_budget) || 0;
+    const allocated = categories.reduce((s, c) => s + Number(c.budget_limit), 0);
     const totalSpent = items.reduce((s, i) => s + Number(i.final_price || 0), 0);
     const remaining = totalBudget - totalSpent;
+    const unallocated = totalBudget - allocated;
     const overbudget = remaining < 0;
     const activeItems = items.filter(i => i.status !== 'Done');
     const purchasedCount = items.filter(i => Number(i.final_price) > 0).length;
@@ -86,12 +88,44 @@ export default function Dashboard() {
         },
     };
 
+    const allocPercent = totalBudget > 0 ? Math.round((allocated / totalBudget) * 100) : 0;
+    const spentPercent = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
+
     return (
         <div className="fade-in">
             <div className="page-header">
                 <h1>Dashboard</h1>
                 <p>Ringkasan biaya pindah rumah &amp; perabot Anda</p>
             </div>
+
+            {/* Budget Overview Bar */}
+            {totalBudget > 0 && (
+                <div className="budget-overview-bar">
+                    <div className="budget-overview-header">
+                        <span className="budget-overview-title">💰 Total Budget</span>
+                        <span className="budget-overview-amount">{formatCurrency(totalBudget)}</span>
+                    </div>
+                    <div className="budget-overview-progress">
+                        <div className="budget-overview-track">
+                            <div
+                                className={`budget-overview-fill allocated`}
+                                style={{ width: `${Math.min(allocPercent, 100)}%` }}
+                            />
+                            <div
+                                className={`budget-overview-fill spent`}
+                                style={{ width: `${Math.min(spentPercent, 100)}%` }}
+                            />
+                        </div>
+                    </div>
+                    <div className="budget-overview-legend">
+                        <span><span className="legend-dot allocated" /> Teralokasi: {formatCurrency(allocated)} ({allocPercent}%)</span>
+                        <span><span className="legend-dot spent" /> Terpakai: {formatCurrency(totalSpent)} ({spentPercent}%)</span>
+                        {unallocated > 0 && (
+                            <span><span className="legend-dot unallocated" /> Belum dialokasi: {formatCurrency(unallocated)}</span>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Stats */}
             <div className="stats-grid">
@@ -102,22 +136,22 @@ export default function Dashboard() {
                     <div className="stat-sub">{categories.length} kategori</div>
                 </div>
                 <div className="stat-card spent">
+                    <div className="stat-icon">📋</div>
+                    <div className="stat-label">Teralokasi</div>
+                    <div className="stat-value currency">{formatCurrency(allocated)}</div>
+                    <div className="stat-sub">{allocPercent}% dari budget</div>
+                </div>
+                <div className="stat-card items-card">
                     <div className="stat-icon">🛒</div>
-                    <div className="stat-label">Total Spent</div>
+                    <div className="stat-label">Terpakai</div>
                     <div className="stat-value currency">{formatCurrency(totalSpent)}</div>
                     <div className="stat-sub">{purchasedCount} item dibeli</div>
                 </div>
                 <div className={`stat-card remaining ${overbudget ? 'overbudget' : ''}`}>
                     <div className="stat-icon">{overbudget ? '⚠️' : '✅'}</div>
-                    <div className="stat-label">Remaining Budget</div>
+                    <div className="stat-label">Sisa Budget</div>
                     <div className="stat-value currency">{formatCurrency(remaining)}</div>
                     <div className="stat-sub">{overbudget ? 'Over budget!' : 'Dalam budget'}</div>
-                </div>
-                <div className="stat-card items-card">
-                    <div className="stat-icon">📦</div>
-                    <div className="stat-label">Item Aktif</div>
-                    <div className="stat-value">{activeItems.length}</div>
-                    <div className="stat-sub">dari {items.length} total item</div>
                 </div>
             </div>
 

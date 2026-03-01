@@ -7,6 +7,7 @@ import Dashboard from '@/components/Dashboard';
 import CategoriesPage from '@/components/CategoriesPage';
 import ItemsPage from '@/components/ItemsPage';
 import AdminPage from '@/components/AdminPage';
+import BudgetSetup from '@/components/BudgetSetup';
 
 // Context for toast + data
 export const AppContext = createContext();
@@ -19,10 +20,12 @@ export default function HomePage() {
   const [page, setPage] = useState('dashboard');
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
+  const [settings, setSettings] = useState({});
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
+  const [needSetup, setNeedSetup] = useState(false);
 
   // Load theme from localStorage
   useEffect(() => {
@@ -70,17 +73,40 @@ export default function HomePage() {
     }
   }, [showToast]);
 
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/settings');
+      if (!res.ok) throw new Error('Failed to fetch settings');
+      const data = await res.json();
+      setSettings(data);
+      return data;
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
+  }, []);
+
   const refreshData = useCallback(async () => {
-    await Promise.all([fetchCategories(), fetchItems()]);
-  }, [fetchCategories, fetchItems]);
+    await Promise.all([fetchCategories(), fetchItems(), fetchSettings()]);
+  }, [fetchCategories, fetchItems, fetchSettings]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try { await fetch('/api/seed', { method: 'POST' }); } catch { }
-      await refreshData();
+      const s = await fetchSettings();
+      await Promise.all([fetchCategories(), fetchItems()]);
+      // If total_budget is not set or is '0', show setup screen
+      if (!s.total_budget || s.total_budget === '0') {
+        setNeedSetup(true);
+      }
       setLoading(false);
     })();
+  }, [fetchCategories, fetchItems, fetchSettings]);
+
+  const handleSetupComplete = useCallback(async () => {
+    await refreshData();
+    setNeedSetup(false);
   }, [refreshData]);
 
   const navigate = useCallback((p) => {
@@ -94,11 +120,30 @@ export default function HomePage() {
   }, []);
 
   const ctxValue = {
-    categories, items, loading,
-    fetchCategories, fetchItems, refreshData,
+    categories, items, settings, loading,
+    fetchCategories, fetchItems, fetchSettings, refreshData,
     showToast, formatCurrency,
     page, navigate, theme,
   };
+
+  // Show loading spinner
+  if (loading) {
+    return (
+      <div className="loading-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  // Show budget setup if needed
+  if (needSetup) {
+    return (
+      <>
+        <BudgetSetup onComplete={handleSetupComplete} />
+        <Toast toasts={toasts} />
+      </>
+    );
+  }
 
   return (
     <AppContext.Provider value={ctxValue}>
@@ -120,16 +165,12 @@ export default function HomePage() {
       <div className="app-layout">
         <Sidebar activePage={page} onNavigate={navigate} open={sidebarOpen} theme={theme} onToggleTheme={toggleTheme} />
         <main className="main-content">
-          {loading ? (
-            <div className="loading-container"><div className="spinner" /></div>
-          ) : (
-            <>
-              {page === 'dashboard' && <Dashboard />}
-              {page === 'categories' && <CategoriesPage />}
-              {page === 'items' && <ItemsPage />}
-              {page === 'admin' && <AdminPage />}
-            </>
-          )}
+          <>
+            {page === 'dashboard' && <Dashboard />}
+            {page === 'categories' && <CategoriesPage />}
+            {page === 'items' && <ItemsPage />}
+            {page === 'admin' && <AdminPage />}
+          </>
         </main>
       </div>
 
@@ -137,4 +178,3 @@ export default function HomePage() {
     </AppContext.Provider>
   );
 }
-

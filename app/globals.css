@@ -1725,3 +1725,440 @@ table tbody tr.overbudget:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   BUDGET SETUP SCREEN
+   ============================================ */
+.budget-setup-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.budget-setup-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  max-width: 520px;
+  width: 100%;
+  box-shadow: var(--shadow-lg), 0 0 80px rgba(99, 102, 241, 0.08);
+  animation: budgetSetupIn 0.6s ease-out;
+  overflow: hidden;
+}
+
+@keyframes budgetSetupIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.budget-setup-header {
+  text-align: center;
+  padding: 40px 32px 24px;
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, transparent 100%);
+}
+
+.budget-setup-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.budget-setup-logo-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--accent-gradient);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: var(--shadow-glow);
+}
+
+.budget-setup-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.budget-setup-logo-text span {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.budget-setup-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.budget-setup-header p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.budget-setup-body {
+  padding: 24px 32px;
+}
+
+.budget-setup-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.budget-setup-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-input);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.budget-setup-input-wrapper:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.budget-setup-prefix {
+  padding: 14px 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border-right: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.budget-setup-input {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+}
+
+.budget-setup-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.budget-setup-input::-webkit-outer-spin-button,
+.budget-setup-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.budget-setup-preview {
+  margin-top: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-primary-hover);
+  text-align: right;
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.budget-setup-error {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--danger);
+  padding: 8px 12px;
+  background: var(--danger-light);
+  border-radius: var(--radius-sm);
+}
+
+.budget-setup-presets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.budget-setup-presets-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.budget-setup-preset-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.budget-setup-preset-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-color-hover);
+  color: var(--text-primary);
+}
+
+.budget-setup-preset-btn.active {
+  background: var(--accent-primary-light);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary-hover);
+}
+
+.budget-setup-footer {
+  padding: 24px 32px 32px;
+  text-align: center;
+}
+
+.budget-setup-submit {
+  width: 100%;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  letter-spacing: 0.01em;
+}
+
+.budget-setup-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.budget-setup-hint {
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   BUDGET OVERVIEW BAR (Dashboard)
+   ============================================ */
+.budget-overview-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.budget-overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.budget-overview-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.budget-overview-amount {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.budget-overview-progress {
+  margin-bottom: 14px;
+}
+
+.budget-overview-track {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.budget-overview-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width var(--transition-slow);
+}
+
+.budget-overview-fill.allocated {
+  background: rgba(99, 102, 241, 0.35);
+  z-index: 1;
+}
+
+.budget-overview-fill.spent {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  z-index: 2;
+}
+
+.budget-overview-legend {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.legend-dot.allocated {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+.legend-dot.spent {
+  background: #f59e0b;
+}
+
+.legend-dot.unallocated {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   BUDGET ALLOCATION BAR (Categories Page)
+   ============================================ */
+.budget-alloc-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  margin-bottom: 20px;
+}
+
+.budget-alloc-bar.over {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, var(--bg-card), rgba(239, 68, 68, 0.05));
+}
+
+.budget-alloc-bar.full {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.budget-alloc-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.budget-alloc-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.budget-alloc-progress .progress-bar {
+  flex: 1;
+}
+
+.budget-alloc-progress .progress-bar-label {
+  white-space: nowrap;
+  margin-top: 0;
+}
+
+/* ============================================
+   BUDGET LIMIT HINT (Category Modal)
+   ============================================ */
+.budget-limit-hint {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--success);
+  padding: 6px 10px;
+  background: var(--success-light);
+  border-radius: var(--radius-sm);
+}
+
+.budget-limit-hint.over {
+  color: var(--danger);
+  background: var(--danger-light);
+}
+
+/* Responsive for budget setup */
+@media (max-width: 480px) {
+  .budget-setup-header {
+    padding: 32px 20px 20px;
+  }
+
+  .budget-setup-body {
+    padding: 20px;
+  }
+
+  .budget-setup-footer {
+    padding: 20px 20px 28px;
+  }
+
+  .budget-setup-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .budget-setup-input {
+    font-size: 1.1rem;
+  }
+
+  .budget-overview-legend {
+    gap: 12px;
+  }
+
+  .budget-alloc-info {
+    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

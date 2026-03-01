@@ -394,6 +394,10 @@ export default function AdminPage() {
                                 <span className="admin-settings-value">{settings.currency || 'IDR'} ({settings.currency_symbol || 'Rp'})</span>
                             </div>
                             <div className="admin-settings-item">
+                                <span className="admin-settings-label">Total Budget</span>
+                                <span className="admin-settings-value">{formatCurrency(Number(settings.total_budget) || 0)}</span>
+                            </div>
+                            <div className="admin-settings-item">
                                 <span className="admin-settings-label">Budget Warning</span>
                                 <span className="admin-settings-value">{settings.budget_warning_threshold || '80'}%</span>
                             </div>
@@ -539,6 +543,15 @@ export default function AdminPage() {
                             <option value="SGD">SGD — Singapore Dollar</option>
                             <option value="MYR">MYR — Ringgit</option>
                         </select>
+                    </div>
+                    <div className="form-group full-width">
+                        <label>Total Budget (Rp)</label>
+                        <input type="number" min="0" value={settingsForm.total_budget || ''} onChange={e => setSettingsForm(f => ({ ...f, total_budget: e.target.value }))} placeholder="e.g. 50000000" />
+                        {settingsForm.total_budget && Number(settingsForm.total_budget) > 0 && (
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                                = {formatCurrency(Number(settingsForm.total_budget))}
+                            </div>
+                        )}
                     </div>
                     <div className="form-group">
                         <label>Budget Warning Threshold (%)</label>

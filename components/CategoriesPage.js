@@ -5,7 +5,10 @@ import { useApp } from '@/app/page';
 import Modal, { ConfirmModal } from '@/components/Modal';
 
 export default function CategoriesPage() {
-    const { categories, formatCurrency, refreshData, showToast } = useApp();
+    const { categories, settings, formatCurrency, refreshData, showToast } = useApp();
+    const totalBudget = Number(settings.total_budget) || 0;
+    const allocated = categories.reduce((s, c) => s + Number(c.budget_limit), 0);
+    const unallocated = totalBudget - allocated;
     const [modalOpen, setModalOpen] = useState(false);
     const [editingCat, setEditingCat] = useState(null);
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -82,6 +85,28 @@ export default function CategoriesPage() {
                     <span>＋</span> Tambah Kategori
                 </button>
             </div>
+
+            {/* Budget Allocation Info */}
+            {totalBudget > 0 && (
+                <div className={`budget-alloc-bar ${unallocated < 0 ? 'over' : unallocated === 0 ? 'full' : ''}`}>
+                    <div className="budget-alloc-info">
+                        <span>💰 Total Budget: <strong>{formatCurrency(totalBudget)}</strong></span>
+                        <span>📋 Teralokasi: <strong>{formatCurrency(allocated)}</strong></span>
+                        <span className={unallocated < 0 ? 'text-danger' : 'text-success'}>
+                            {unallocated >= 0 ? '✅' : '⚠️'} Sisa: <strong>{formatCurrency(unallocated)}</strong>
+                        </span>
+                    </div>
+                    <div className="budget-alloc-progress">
+                        <div className="progress-bar">
+                            <div
+                                className={`progress-bar-fill ${allocated > totalBudget ? 'danger' : allocated >= totalBudget * 0.8 ? 'warning' : ''}`}
+                                style={{ width: `${Math.min((allocated / totalBudget) * 100, 100)}%` }}
+                            />
+                        </div>
+                        <span className="progress-bar-label">{totalBudget > 0 ? Math.round((allocated / totalBudget) * 100) : 0}% teralokasi</span>
+                    </div>
+                </div>
+            )}
 
             <div className="card">
                 <div className="card-body-flush">
@@ -168,6 +193,20 @@ export default function CategoriesPage() {
                             type="number" placeholder="0" min="0"
                             value={form.budget_limit} onChange={e => setForm(f => ({ ...f, budget_limit: e.target.value }))}
                         />
+                        {totalBudget > 0 && (() => {
+                            const currentAlloc = editingCat ? allocated - Number(editingCat.budget_limit) : allocated;
+                            const availableForThis = totalBudget - currentAlloc;
+                            const inputVal = Number(form.budget_limit) || 0;
+                            const isOver = inputVal > availableForThis;
+                            return (
+                                <div className={`budget-limit-hint ${isOver ? 'over' : ''}`}>
+                                    {isOver
+                                        ? `⚠️ Melebihi sisa budget! Tersedia: ${formatCurrency(availableForThis)}`
+                                        : `✅ Sisa budget tersedia: ${formatCurrency(availableForThis)}`
+                                    }
+                                </div>
+                            );
+                        })()}
                     </div>
                 </div>
             </Modal>
