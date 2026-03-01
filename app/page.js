@@ -107,7 +107,7 @@ export default function HomePage() {
         <button className="mobile-menu-btn" onClick={() => setSidebarOpen(o => !o)}>☰</button>
         <div className="sidebar-logo">
           <div className="logo-icon">🏠</div>
-          <div className="logo-text">Move<span>Budget</span></div>
+          <div className="logo-text">Nara<span>Home</span></div>
         </div>
         <div style={{ width: 40 }} />
       </header>
