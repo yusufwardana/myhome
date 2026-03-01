@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 
-export default function BudgetSetup({ onComplete }) {
+export default function BudgetSetup({ onComplete, showToast }) {
     const [amount, setAmount] = useState('');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+    const [loadDemo, setLoadDemo] = useState(false);
 
     const formatPreview = (val) => {
         const num = Number(val);
@@ -26,16 +27,25 @@ export default function BudgetSetup({ onComplete }) {
         setError('');
         setSaving(true);
         try {
+            // 1. Save total_budget to settings
             const res = await fetch('/api/admin/settings', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ total_budget: String(num) }),
             });
-            if (!res.ok) throw new Error('Failed to save');
+            if (!res.ok) throw new Error('Gagal menyimpan budget');
+
+            // 2. Optionally seed demo data
+            if (loadDemo) {
+                const seedRes = await fetch('/api/seed', { method: 'POST' });
+                if (!seedRes.ok) throw new Error('Gagal memuat data demo');
+            }
+
+            showToast?.('Budget berhasil disimpan! 🎉');
             onComplete();
         } catch (err) {
             console.error(err);
-            setError('Gagal menyimpan budget. Coba lagi.');
+            setError(err.message || 'Gagal menyimpan. Coba lagi.');
         }
         setSaving(false);
     };
@@ -49,6 +59,7 @@ export default function BudgetSetup({ onComplete }) {
         { label: '50 Juta', value: 50000000 },
         { label: '75 Juta', value: 75000000 },
         { label: '100 Juta', value: 100000000 },
+        { label: '150 Juta', value: 150000000 },
     ];
 
     return (
@@ -60,7 +71,7 @@ export default function BudgetSetup({ onComplete }) {
                         <span className="budget-setup-logo-text">Nara<span>Home</span></span>
                     </div>
                     <h1>Selamat Datang!</h1>
-                    <p>Atur total budget pindah rumah & perabot Anda untuk memulai perencanaan.</p>
+                    <p>Atur total budget pindah rumah &amp; perabot Anda untuk memulai perencanaan.</p>
                 </div>
 
                 <div className="budget-setup-body">
@@ -80,10 +91,10 @@ export default function BudgetSetup({ onComplete }) {
                     </div>
                     {amount && Number(amount) > 0 && (
                         <div className="budget-setup-preview">
-                            {formatPreview(amount)}
+                            = {formatPreview(amount)}
                         </div>
                     )}
-                    {error && <div className="budget-setup-error">{error}</div>}
+                    {error && <div className="budget-setup-error">⚠️ {error}</div>}
 
                     <div className="budget-setup-presets">
                         <span className="budget-setup-presets-label">Quick set:</span>
@@ -97,6 +108,21 @@ export default function BudgetSetup({ onComplete }) {
                             </button>
                         ))}
                     </div>
+
+                    {/* Demo data toggle */}
+                    <label className="budget-setup-demo-toggle">
+                        <div className={`budget-setup-toggle-track ${loadDemo ? 'on' : ''}`} onClick={() => setLoadDemo(v => !v)}>
+                            <div className="budget-setup-toggle-thumb" />
+                        </div>
+                        <div className="budget-setup-demo-text">
+                            <span className="budget-setup-demo-label">Muat data demo</span>
+                            <span className="budget-setup-demo-sub">
+                                {loadDemo
+                                    ? 'Akan diisi contoh kategori & items — bisa dihapus nanti'
+                                    : 'Mulai dari database kosong'}
+                            </span>
+                        </div>
+                    </label>
                 </div>
 
                 <div className="budget-setup-footer">
@@ -104,6 +130,7 @@ export default function BudgetSetup({ onComplete }) {
                         className="btn btn-primary budget-setup-submit"
                         onClick={handleSubmit}
                         disabled={saving || !amount || Number(amount) <= 0}
+                        id="btn-budget-setup-submit"
                     >
                         {saving ? '⏳ Menyimpan...' : '🚀 Mulai Planning'}
                     </button>

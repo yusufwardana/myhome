@@ -93,20 +93,24 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      try { await fetch('/api/seed', { method: 'POST' }); } catch { }
+      try {
+        // Ensure DB tables exist, but do NOT auto-seed demo data
+        await fetch('/api/seed/init', { method: 'POST' });
+      } catch { }
       const s = await fetchSettings();
-      await Promise.all([fetchCategories(), fetchItems()]);
-      // If total_budget is not set or is '0', show setup screen
+      // Only load data if budget has been configured
       if (!s.total_budget || s.total_budget === '0') {
         setNeedSetup(true);
+      } else {
+        await Promise.all([fetchCategories(), fetchItems()]);
       }
       setLoading(false);
     })();
   }, [fetchCategories, fetchItems, fetchSettings]);
 
   const handleSetupComplete = useCallback(async () => {
-    await refreshData();
     setNeedSetup(false);
+    await refreshData();
   }, [refreshData]);
 
   const navigate = useCallback((p) => {
@@ -139,7 +143,7 @@ export default function HomePage() {
   if (needSetup) {
     return (
       <>
-        <BudgetSetup onComplete={handleSetupComplete} />
+        <BudgetSetup onComplete={handleSetupComplete} showToast={showToast} />
         <Toast toasts={toasts} />
       </>
     );

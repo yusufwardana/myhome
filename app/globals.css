@@ -1976,6 +1976,78 @@ table tbody tr.overbudget:hover {
   color: var(--text-muted);
 }
 
+/* Demo data toggle */
+.budget-setup-demo-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.budget-setup-demo-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color-hover);
+}
+
+.budget-setup-toggle-track {
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid var(--border-color);
+  position: relative;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.budget-setup-toggle-track.on {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.budget-setup-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.budget-setup-toggle-track.on .budget-setup-toggle-thumb {
+  transform: translateX(20px);
+}
+
+.budget-setup-demo-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.budget-setup-demo-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.budget-setup-demo-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 /* ============================================
    BUDGET OVERVIEW BAR (Dashboard)
    ============================================ */
