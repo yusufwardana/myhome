@@ -16,7 +16,7 @@ export default function Sidebar({ activePage, onNavigate, open, theme, onToggleT
             <div className="sidebar-header">
                 <a href="#" className="sidebar-logo" onClick={(e) => { e.preventDefault(); onNavigate('dashboard'); }}>
                     <div className="logo-icon">🏠</div>
-                    <div className="logo-text">Move<span>Budget</span></div>
+                    <div className="logo-text">Nara<span>Home</span></div>
                 </a>
             </div>
             <nav className="sidebar-nav">
