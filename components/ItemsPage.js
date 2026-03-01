@@ -115,25 +115,27 @@ export default function ItemsPage() {
 
     const updateField = (field) => (e) => setForm(f => ({ ...f, [field]: e.target.value }));
 
-    // Kanban data
     const statuses = ['Planned', 'Purchased', 'Delivered', 'Done'];
     const statusDot = { Planned: 'planned', Purchased: 'purchased', Delivered: 'delivered', Done: 'done' };
 
+    const activeFiltersCount = [filterCat, filterPri, filterStatus].filter(Boolean).length;
+
     return (
         <div className="fade-in">
+            {/* Page Header */}
             <div className="page-header flex items-center justify-between flex-wrap gap-8">
                 <div>
                     <h1>Items</h1>
                     <p>Daftar semua item yang dibutuhkan</p>
                 </div>
-                <button className="btn btn-primary" onClick={openAdd}>
+                <button className="btn btn-primary items-add-desktop" onClick={openAdd}>
                     <span>＋</span> Tambah Item
                 </button>
             </div>
 
-            {/* Filters & View Toggle */}
+            {/* Filter & View Controls */}
             <div className="card mb-24">
-                <div className="card-header">
+                <div className="card-header items-filter-header">
                     <div className="filters-bar">
                         <div className="filter-group">
                             <label>Kategori</label>
@@ -158,17 +160,91 @@ export default function ItemsPage() {
                                 {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                             </select>
                         </div>
+                        {activeFiltersCount > 0 && (
+                            <button
+                                className="btn btn-sm btn-secondary"
+                                onClick={() => { setFilterCat(''); setFilterPri(''); setFilterStatus(''); }}
+                                style={{ alignSelf: 'flex-end' }}
+                            >
+                                ✕ Reset ({activeFiltersCount})
+                            </button>
+                        )}
                     </div>
                     <div className="view-toggle">
-                        <button className={`view-toggle-btn ${view === 'table' ? 'active' : ''}`} onClick={() => setView('table')}>📋 Table</button>
+                        <button className={`view-toggle-btn ${view === 'table' ? 'active' : ''}`} onClick={() => setView('table')}>📋 List</button>
                         <button className={`view-toggle-btn ${view === 'kanban' ? 'active' : ''}`} onClick={() => setView('kanban')}>📌 Kanban</button>
                     </div>
                 </div>
             </div>
 
-            {/* Table View */}
+            {/* ═══ MOBILE: Card List View (CSS shows/hides based on screen size) ═══ */}
+            <div className="mobile-items-list">
+                {filtered.length === 0 ? (
+                    <div className="empty-state" style={{ padding: '48px 24px' }}>
+                        <div className="empty-icon">📦</div>
+                        <p>Tidak ada item ditemukan</p>
+                        <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={openAdd}>＋ Tambah Item</button>
+                    </div>
+                ) : filtered.map(item => {
+                    const bestDeal = isBestDeal(item);
+                    const savings = bestDeal ? Number(item.estimated_price) - Number(item.final_price) : 0;
+                    return (
+                        <div className="mic-card" key={item.id}>
+                            {/* Card Top: Name + Actions */}
+                            <div className="mic-top">
+                                <div className="mic-name-wrap">
+                                    <span className="mic-name">{item.name}</span>
+                                    {bestDeal && <span className="badge badge-best-deal">🏷️ Deal</span>}
+                                </div>
+                                <div className="mic-actions">
+                                    <button className="btn-icon-lg" title="Edit" onClick={() => openEdit(item)}>✏️</button>
+                                    <button className="btn-icon-lg btn-icon-danger" title="Hapus" onClick={() => openDelete(item)}>🗑️</button>
+                                </div>
+                            </div>
+
+                            {/* Badges Row */}
+                            <div className="mic-badges">
+                                <span className="mic-cat-badge">{item.category_name || 'Tanpa Kategori'}</span>
+                                <span className={`badge badge-priority-${item.priority?.toLowerCase()}`}>{item.priority}</span>
+                                <span className={`badge badge-status-${item.status?.toLowerCase()}`}>{item.status}</span>
+                            </div>
+
+                            {/* Prices */}
+                            <div className="mic-prices">
+                                <div className="mic-price-col">
+                                    <span className="mic-price-lbl">Estimasi</span>
+                                    <span className="mic-price-amt">{Number(item.estimated_price) ? formatCurrency(item.estimated_price) : <span className="text-muted">—</span>}</span>
+                                </div>
+                                <div className="mic-price-sep">→</div>
+                                <div className="mic-price-col">
+                                    <span className="mic-price-lbl">Final</span>
+                                    <span className={`mic-price-amt ${Number(item.final_price) ? '' : ''}`}>
+                                        {Number(item.final_price) ? formatCurrency(item.final_price) : <span className="text-muted">—</span>}
+                                    </span>
+                                </div>
+                                {bestDeal && (
+                                    <div className="mic-price-col mic-savings">
+                                        <span className="mic-price-lbl">Hemat</span>
+                                        <span className="mic-price-amt text-success">+{formatCurrency(savings)}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Footer: Date + Notes */}
+                            {(item.purchase_date || item.notes) && (
+                                <div className="mic-footer">
+                                    {item.purchase_date && <span className="mic-date">📅 {formatDate(item.purchase_date)}</span>}
+                                    {item.notes && <span className="mic-notes">{item.notes.substring(0, 60)}{item.notes.length > 60 ? '…' : ''}</span>}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* ═══ DESKTOP: Table View ═══ */}
             {view === 'table' && (
-                <div className="card">
+                <div className="card desktop-items-view">
                     <div className="card-body-flush">
                         <div className="table-wrapper">
                             <table>
@@ -218,9 +294,9 @@ export default function ItemsPage() {
                 </div>
             )}
 
-            {/* Kanban View */}
+            {/* ═══ DESKTOP: Kanban View ═══ */}
             {view === 'kanban' && (
-                <div className="kanban-board">
+                <div className="kanban-board desktop-items-view">
                     {statuses.map(st => {
                         const colItems = filtered.filter(i => i.status === st);
                         return (
@@ -252,6 +328,9 @@ export default function ItemsPage() {
                     })}
                 </div>
             )}
+
+            {/* FAB — Mobile Add Button */}
+            <button className="fab-add" onClick={openAdd} title="Tambah Item">＋</button>
 
             {/* Item Modal */}
             <Modal

@@ -153,12 +153,13 @@ export default function HomePage() {
     <AppContext.Provider value={ctxValue}>
       {/* Mobile Header */}
       <header className="mobile-header">
-        <button className="mobile-menu-btn" onClick={() => setSidebarOpen(o => !o)}>☰</button>
         <div className="sidebar-logo">
           <div className="logo-icon">🏠</div>
           <div className="logo-text">Nara<span>Home</span></div>
         </div>
-        <div style={{ width: 40 }} />
+        <button className="mobile-theme-btn" onClick={toggleTheme} title="Toggle theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
       </header>
 
       {/* Sidebar Overlay */}
@@ -177,6 +178,38 @@ export default function HomePage() {
           </>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="mobile-bottom-nav">
+        <button
+          className={`mbn-item ${page === 'dashboard' ? 'active' : ''}`}
+          onClick={() => navigate('dashboard')}
+        >
+          <span className="mbn-icon">📊</span>
+          <span className="mbn-label">Dashboard</span>
+        </button>
+        <button
+          className={`mbn-item ${page === 'categories' ? 'active' : ''}`}
+          onClick={() => navigate('categories')}
+        >
+          <span className="mbn-icon">📁</span>
+          <span className="mbn-label">Kategori</span>
+        </button>
+        <button
+          className={`mbn-item ${page === 'items' ? 'active' : ''}`}
+          onClick={() => navigate('items')}
+        >
+          <span className="mbn-icon">📦</span>
+          <span className="mbn-label">Items</span>
+        </button>
+        <button
+          className={`mbn-item ${page === 'admin' ? 'active' : ''}`}
+          onClick={() => navigate('admin')}
+        >
+          <span className="mbn-icon">⚙️</span>
+          <span className="mbn-label">Admin</span>
+        </button>
+      </nav>
 
       <Toast toasts={toasts} />
     </AppContext.Provider>
