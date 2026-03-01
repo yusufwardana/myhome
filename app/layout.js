@@ -1,7 +1,7 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'MoveBudget — Kelola Biaya Pindah Rumah',
+  title: 'Nara\'s Home',
   description: 'Aplikasi pengelolaan biaya pindah rumah dan pembelian perabot. Lacak budget, pengeluaran, dan status item.',
 };
 
