@@ -7,6 +7,10 @@ export default function Sidebar({ activePage, onNavigate, open }) {
         { id: 'items', icon: '📦', label: 'Items' },
     ];
 
+    const adminItems = [
+        { id: 'admin', icon: '⚙️', label: 'Admin' },
+    ];
+
     return (
         <aside className={`sidebar ${open ? 'open' : ''}`}>
             <div className="sidebar-header">
@@ -26,6 +30,17 @@ export default function Sidebar({ activePage, onNavigate, open }) {
                         <span>{item.label}</span>
                     </button>
                 ))}
+                <div className="nav-divider" />
+                {adminItems.map(item => (
+                    <button
+                        key={item.id}
+                        className={`nav-item ${activePage === item.id ? 'active' : ''}`}
+                        onClick={() => onNavigate(item.id)}
+                    >
+                        <span className="nav-icon">{item.icon}</span>
+                        <span>{item.label}</span>
+                    </button>
+                ))}
             </nav>
             <div className="sidebar-footer">
                 <div className="sidebar-footer-info">MoveBudget v2.0<br />© 2026</div>
@@ -33,3 +48,4 @@ export default function Sidebar({ activePage, onNavigate, open }) {
         </aside>
     );
 }
+

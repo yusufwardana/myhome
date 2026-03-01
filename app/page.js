@@ -6,6 +6,7 @@ import Toast from '@/components/Toast';
 import Dashboard from '@/components/Dashboard';
 import CategoriesPage from '@/components/CategoriesPage';
 import ItemsPage from '@/components/ItemsPage';
+import AdminPage from '@/components/AdminPage';
 
 // Context for toast + data
 export const AppContext = createContext();
@@ -110,6 +111,7 @@ export default function HomePage() {
               {page === 'dashboard' && <Dashboard />}
               {page === 'categories' && <CategoriesPage />}
               {page === 'items' && <ItemsPage />}
+              {page === 'admin' && <AdminPage />}
             </>
           )}
         </main>
