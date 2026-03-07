@@ -108,7 +108,64 @@ export default function CategoriesPage() {
                 </div>
             )}
 
-            <div className="card">
+            {/* ═══ MOBILE: Category Card List ═══ */}
+            <div className="mobile-categories-list">
+                {categories.length === 0 ? (
+                    <div className="empty-state" style={{ padding: '48px 24px' }}>
+                        <div className="empty-icon">📁</div>
+                        <p>Belum ada kategori</p>
+                        <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={openAdd}>＋ Tambah Kategori</button>
+                    </div>
+                ) : categories.map(cat => {
+                    const spent = Number(cat.total_spent);
+                    const budget = Number(cat.budget_limit);
+                    const rem = budget - spent;
+                    const percent = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
+                    const ob = rem < 0;
+                    const barClass = percent >= 100 ? 'danger' : percent >= 80 ? 'warning' : '';
+
+                    return (
+                        <div className="cat-card" key={cat.id}>
+                            <div className="cat-card-header">
+                                <div className="cat-card-title">
+                                    <strong>{cat.name}</strong>
+                                    {ob && <span className="badge badge-overbudget" style={{ marginLeft: 8 }}>⚠️ Over</span>}
+                                </div>
+                                <div className="cat-card-actions">
+                                    <button className="btn-icon-sm" onClick={() => openEdit(cat)}>✏️</button>
+                                    <button className="btn-icon-sm btn-icon-danger" onClick={() => openDelete(cat)}>🗑️</button>
+                                </div>
+                            </div>
+
+                            <div className="cat-card-stats">
+                                <div className="ccs-item">
+                                    <span className="ccs-lbl">Budget</span>
+                                    <span className="ccs-val">{formatCurrency(budget)}</span>
+                                </div>
+                                <div className="ccs-item text-right">
+                                    <span className="ccs-lbl">Terpakai</span>
+                                    <span className="ccs-val">{formatCurrency(spent)}</span>
+                                </div>
+                            </div>
+
+                            <div className="cat-card-progress">
+                                <div className="progress-bar">
+                                    <div className={`progress-bar-fill ${barClass}`} style={{ width: `${percent}%` }} />
+                                </div>
+                                <div className="cat-card-rem-row">
+                                    <span className="cc-percent">{percent.toFixed(1)}%</span>
+                                    <span className={`cc-rem ${ob ? 'text-danger' : 'text-success'}`}>
+                                        Sisa: {formatCurrency(rem)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* ═══ DESKTOP: Table View ═══ */}
+            <div className="card desktop-categories-view">
                 <div className="card-body-flush">
                     <div className="table-wrapper">
                         <table>
