@@ -8,6 +8,7 @@ import CategoriesPage from '@/components/CategoriesPage';
 import ItemsPage from '@/components/ItemsPage';
 import AdminPage from '@/components/AdminPage';
 import BudgetSetup from '@/components/BudgetSetup';
+import NotesPage from '@/components/NotesPage';
 
 // Context for toast + data
 export const AppContext = createContext();
@@ -174,6 +175,7 @@ export default function HomePage() {
             {page === 'dashboard' && <Dashboard />}
             {page === 'categories' && <CategoriesPage />}
             {page === 'items' && <ItemsPage />}
+            {page === 'notes' && <NotesPage />}
             {page === 'admin' && <AdminPage />}
           </>
         </main>
@@ -201,6 +203,13 @@ export default function HomePage() {
         >
           <span className="mbn-icon">📦</span>
           <span className="mbn-label">Items</span>
+        </button>
+        <button
+          className={`mbn-item ${page === 'notes' ? 'active' : ''}`}
+          onClick={() => navigate('notes')}
+        >
+          <span className="mbn-icon">📒</span>
+          <span className="mbn-label">Catatan</span>
         </button>
         <button
           className={`mbn-item ${page === 'admin' ? 'active' : ''}`}

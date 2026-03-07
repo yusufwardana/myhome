@@ -5,6 +5,7 @@ export default function Sidebar({ activePage, onNavigate, open, theme, onToggleT
         { id: 'dashboard', icon: '📊', label: 'Dashboard' },
         { id: 'categories', icon: '📁', label: 'Kategori' },
         { id: 'items', icon: '📦', label: 'Items' },
+        { id: 'notes', icon: '📒', label: 'Catatan' },
     ];
 
     const adminItems = [
