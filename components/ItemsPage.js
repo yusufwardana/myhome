@@ -123,7 +123,7 @@ export default function ItemsPage() {
     return (
         <div className="fade-in">
             {/* Page Header */}
-            <div className="page-header flex items-center justify-between flex-wrap gap-8">
+            <div className="page-header">
                 <div>
                     <h1>Items</h1>
                     <p>Daftar semua item yang dibutuhkan</p>

@@ -76,7 +76,7 @@ export default function CategoriesPage() {
 
     return (
         <div className="fade-in">
-            <div className="page-header flex items-center justify-between flex-wrap gap-8">
+            <div className="page-header">
                 <div>
                     <h1>Kategori</h1>
                     <p>Kelola kategori budget pindah rumah</p>

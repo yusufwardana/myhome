@@ -189,7 +189,33 @@ export default function Dashboard() {
                     <h2>🔄 Item Aktif</h2>
                     <span className="text-muted" style={{ fontSize: '0.82rem' }}>{activeItems.length} item aktif</span>
                 </div>
-                <div className="card-body-flush">
+
+                {/* ═══ MOBILE: Active Items Card List ═══ */}
+                <div className="mobile-dashboard-items">
+                    {activeItems.length === 0 ? (
+                        <div className="empty-state" style={{ padding: '32px' }}>
+                            <div className="empty-icon">🎉</div>
+                            <p>Semua item sudah selesai!</p>
+                        </div>
+                    ) : activeItems.map(item => (
+                        <div className="mdi-card" key={item.id} onClick={() => navigate('items')}>
+                            <div className="mdi-row">
+                                <span className="mdi-name">{item.name} {isBestDeal(item) && '🏷️'}</span>
+                                <span className={`badge badge-priority-${item.priority?.toLowerCase()}`} style={{ fontSize: '0.65rem' }}>{item.priority}</span>
+                            </div>
+                            <div className="mdi-row mdi-meta">
+                                <span>{item.category_name || '—'}</span>
+                                <span className="text-primary">{Number(item.final_price) ? formatCurrency(item.final_price) : formatCurrency(item.estimated_price)}</span>
+                            </div>
+                        </div>
+                    ))}
+                    <button className="btn btn-ghost w-100" style={{ margin: '12px', width: 'calc(100% - 24px)' }} onClick={() => navigate('items')}>
+                        Lihat Semua Items →
+                    </button>
+                </div>
+
+                {/* ═══ DESKTOP: Active Items Table ═══ */}
+                <div className="card-body-flush desktop-dashboard-items">
                     <div className="table-wrapper">
                         <table>
                             <thead>
@@ -201,7 +227,7 @@ export default function Dashboard() {
                                 {activeItems.length === 0 ? (
                                     <tr><td colSpan={5}><div className="empty-state"><div className="empty-icon">🎉</div><p>Semua item sudah selesai!</p></div></td></tr>
                                 ) : activeItems.map(item => (
-                                    <tr key={item.id}>
+                                    <tr key={item.id} style={{ cursor: 'pointer' }} onClick={() => navigate('items')}>
                                         <td>
                                             <strong>{item.name}</strong>
                                             {isBestDeal(item) && <span className="badge badge-best-deal" style={{ marginLeft: 6 }}>🏷️ Best Deal</span>}
