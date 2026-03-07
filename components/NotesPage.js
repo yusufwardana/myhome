@@ -99,11 +99,9 @@ function NoteModal({ note, onClose, onSave }) {
         const errs = validate();
         if (Object.keys(errs).length > 0) { setErrors(errs); return; }
         setSaving(true);
-        try {
-            await onSave({ ...form, amount: Number(form.amount) });
-        } finally {
-            setSaving(false);
-        }
+        const ok = await onSave({ ...form, amount: Number(form.amount) });
+        // onSave returns false on error (toast already shown), true on success (modal closed by parent)
+        if (!ok) setSaving(false);
     };
 
     const set = (field, val) => {
@@ -112,8 +110,8 @@ function NoteModal({ note, onClose, onSave }) {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box notes-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay active" onClick={onClose}>
+            <div className="modal notes-modal" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className="modal-title">
                         {note ? '✏️ Edit Catatan' : '➕ Catatan Baru'}
@@ -235,11 +233,13 @@ function DeleteModal({ note, onClose, onConfirm, formatCurrency }) {
     const [deleting, setDeleting] = useState(false);
     const handleDelete = async () => {
         setDeleting(true);
-        try { await onConfirm(); } finally { setDeleting(false); }
+        const ok = await onConfirm();
+        if (!ok) setDeleting(false);
+        // on success, parent clears deleteTarget which unmounts this modal
     };
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box delete-modal-box" onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay active" onClick={onClose}>
+            <div className="modal delete-modal-inner" onClick={e => e.stopPropagation()}>
                 <div className="delete-modal-icon">🗑️</div>
                 <h3 className="delete-modal-title">Hapus Catatan?</h3>
                 <p className="delete-modal-desc">
@@ -283,18 +283,25 @@ export default function NotesPage() {
 
     const fetchStats = useCallback(async () => {
         try {
-            const res = await fetch('/api/notes/stats');
-            if (!res.ok) throw new Error();
+            const res = await fetch('/api/notes/summary');
+            if (!res.ok) throw new Error('Gagal memuat statistik');
             setStats(await res.json());
-        } catch { }
+        } catch (err) {
+            console.warn('fetchStats error:', err.message);
+        }
     }, []);
 
     useEffect(() => {
+        let cancelled = false;
         (async () => {
             setLoading(true);
-            await Promise.all([fetchNotes(), fetchStats()]);
-            setLoading(false);
+            try {
+                await Promise.all([fetchNotes(), fetchStats()]);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
         })();
+        return () => { cancelled = true; };
     }, [fetchNotes, fetchStats]);
 
     const handleSave = async (data) => {
@@ -314,29 +321,31 @@ export default function NotesPage() {
                 });
             }
             if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.error || 'Gagal menyimpan');
+                const errBody = await res.json().catch(() => ({}));
+                throw new Error(errBody.error || `Server error ${res.status}`);
             }
-            showToast(editNote ? 'Catatan diperbarui' : 'Catatan ditambahkan', 'success');
+            showToast(editNote ? 'Catatan diperbarui ✅' : 'Catatan ditambahkan ✅', 'success');
             setShowModal(false);
             setEditNote(null);
             await Promise.all([fetchNotes(), fetchStats()]);
+            return true; // signal success to modal
         } catch (err) {
             showToast(err.message, 'error');
-            throw err;
+            return false; // signal failure — modal stays open
         }
     };
 
     const handleDelete = async () => {
         try {
             const res = await fetch(`/api/notes/${deleteTarget.id}`, { method: 'DELETE' });
-            if (!res.ok) throw new Error('Gagal menghapus');
-            showToast('Catatan dihapus', 'success');
+            if (!res.ok) throw new Error('Gagal menghapus catatan');
+            showToast('Catatan dihapus 🗑️', 'success');
             setDeleteTarget(null);
             await Promise.all([fetchNotes(), fetchStats()]);
+            return true;
         } catch (err) {
             showToast(err.message, 'error');
-            throw err;
+            return false;
         }
     };
 
@@ -362,7 +371,7 @@ export default function NotesPage() {
                     <h1 className="page-title">📒 Catatan Keuangan</h1>
                     <p className="page-subtitle">Catat pemasukan dan pengeluaran harian Anda</p>
                 </div>
-                <button className="btn btn-primary" id="add-note-btn" onClick={openAdd}>
+                <button className="btn btn-primary notes-add-desktop" id="add-note-btn" onClick={openAdd}>
                     ➕ Tambah Catatan
                 </button>
             </div>
@@ -536,6 +545,9 @@ export default function NotesPage() {
                     })}
                 </div>
             )}
+
+            {/* Mobile FAB */}
+            <button className="fab-add notes-fab" onClick={openAdd} title="Tambah Catatan">＋</button>
 
             {/* Modals */}
             {showModal && (

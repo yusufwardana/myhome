@@ -2272,17 +2272,17 @@ table tbody tr.overbudget:hover {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
+    height: 60px;
     background: var(--bg-sidebar);
     border-top: 1px solid var(--border-color);
     z-index: 95;
-    padding: 0 4px;
+    padding: 0 2px;
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   /* Push main content above bottom nav */
   .main-content {
-    padding-bottom: 80px !important;
+    padding-bottom: 76px !important;
   }
 }
 
@@ -2292,16 +2292,17 @@ table tbody tr.overbudget:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 6px 4px;
+  padding: 4px 2px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   font-family: inherit;
   position: relative;
+  min-width: 0;
 }
 
 .mbn-item::before {
@@ -2330,14 +2331,18 @@ table tbody tr.overbudget:hover {
 }
 
 .mbn-icon {
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   line-height: 1;
 }
 
 .mbn-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  max-width: 52px;
 }
 
 /* ─── Items Filter Header ─── */
@@ -3423,60 +3428,252 @@ table tbody tr.overbudget:hover {
 }
 
 /* ============================================
-   RESPONSIVE — NOTES
+   RESPONSIVE — NOTES (mobile-first overrides)
    ============================================ */
+
+/* Desktop only: show the header add button */
+.notes-add-desktop {
+  display: inline-flex;
+}
+
+/* Delete modal inner — compact centered layout */
+.delete-modal-inner {
+  padding: 32px 24px 0;
+  text-align: center;
+}
+
+.delete-modal-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.delete-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.delete-modal-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* Notes FAB — visible only on mobile */
+.notes-fab {
+  display: none;
+}
+
 @media (max-width: 768px) {
+
+  /* ── Notes page header ── */
+  .notes-page .page-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .notes-page .page-title {
+    font-size: 1.25rem;
+  }
+
+  /* Hide desktop add button; show FAB instead */
+  .notes-add-desktop {
+    display: none !important;
+  }
+
+  .notes-fab {
+    display: flex !important;
+  }
+
+  /* ── Stat cards: 2 cols on mobile ── */
   .notes-stats-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  /* Third card full-width */
+  .notes-stats-row .notes-stat-card:nth-child(3) {
+    grid-column: 1 / -1;
   }
 
   .notes-stat-card {
-    padding: 14px 16px;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .notes-stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .notes-stat-label {
+    font-size: 0.68rem;
   }
 
   .notes-stat-value {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
 
+  .notes-stat-sub {
+    display: none;
+  }
+
+  /* ── Toolbar ── */
   .notes-toolbar {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
   .notes-filters {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: start;
   }
 
   .search-wrapper {
     max-width: 100%;
+    min-width: unset;
+    grid-column: 1 / -1;
+  }
+
+  .filter-input {
+    font-size: 1rem;
+    /* prevents iOS auto-zoom on focus */
+    min-width: unset;
+    width: 100%;
   }
 
   .filter-select {
-    min-width: 100%;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .clear-filter-btn {
+    grid-column: 1 / -1;
+    text-align: center;
   }
 
   .view-toggle {
-    align-self: flex-end;
+    width: 100%;
   }
 
+  .view-toggle-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px;
+    font-size: 0.82rem;
+  }
+
+  /* ── Note card ── */
+  .note-card {
+    padding: 14px 16px;
+  }
+
+  .note-card:hover {
+    transform: none;
+    /* disable slide on mobile */
+  }
+
+  .note-card-header {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .note-card-title {
+    font-size: 0.95rem;
+  }
+
+  .note-card-amount {
+    font-size: 1rem;
+    align-self: flex-start;
+  }
+
+  .note-action-btn {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    flex: 1;
+    justify-content: center;
+    display: flex;
+  }
+
+  /* ── Month header ── */
+  .notes-month-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .notes-month-summary {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* ── Form ── */
   .form-row-2 {
     grid-template-columns: 1fr;
   }
 
-  .note-card-header {
-    flex-direction: column;
-    gap: 8px;
+  .notes-form {
+    padding: 16px;
+    gap: 14px;
   }
 
-  .note-card-amount {
-    font-size: 1.1rem;
-    align-self: flex-end;
+  .form-input {
+    font-size: 1rem;
+    /* prevents iOS zoom */
+    padding: 12px 14px;
   }
 
-  .notes-modal {
-    max-width: 100%;
-    margin: 0 8px;
+  .type-btn {
+    padding: 12px 10px;
+    font-size: 0.85rem;
+  }
+
+  /* ── Delete modal ── */
+  .delete-modal-inner {
+    padding: 28px 20px 0;
+  }
+
+  /* ── Bottom nav label hide on very small ── */
+  .mbn-label {
+    font-size: 0.58rem;
+  }
+}
+
+@media (max-width: 400px) {
+
+  /* On very tiny screens, hide labels in bottom nav */
+  .mbn-label {
+    display: none;
+  }
+
+  .mbn-item {
+    justify-content: center;
+    padding: 6px 2px;
+  }
+
+  .mbn-icon {
+    font-size: 1.3rem;
+  }
+
+  /* Stats cards: 1 column on tiny phones */
+  .notes-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .notes-stats-row .notes-stat-card:nth-child(3) {
+    grid-column: 1;
+  }
+
+  .notes-stat-sub {
+    display: block;
   }
 }
