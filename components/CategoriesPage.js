@@ -117,8 +117,8 @@ export default function CategoriesPage() {
                         <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={openAdd}>＋ Tambah Kategori</button>
                     </div>
                 ) : categories.map(cat => {
-                    const spent = Number(cat.total_spent);
-                    const budget = Number(cat.budget_limit);
+                    const spent = Number(cat.total_spent) || 0;
+                    const budget = Number(cat.budget_limit) || 0;
                     const rem = budget - spent;
                     const percent = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
                     const ob = rem < 0;
@@ -129,7 +129,7 @@ export default function CategoriesPage() {
                             <div className="cat-card-header">
                                 <div className="cat-card-title">
                                     <strong>{cat.name}</strong>
-                                    {ob && <span className="badge badge-overbudget" style={{ marginLeft: 8 }}>⚠️ Over</span>}
+                                    {ob && <span className="badge badge-danger" style={{ fontSize: '0.65rem' }}>⚠️ Over Budget</span>}
                                 </div>
                                 <div className="cat-card-actions">
                                     <button className="btn-icon-sm" onClick={() => openEdit(cat)}>✏️</button>
@@ -142,9 +142,9 @@ export default function CategoriesPage() {
                                     <span className="ccs-lbl">Budget</span>
                                     <span className="ccs-val">{formatCurrency(budget)}</span>
                                 </div>
-                                <div className="ccs-item text-right">
+                                <div className="ccs-item" style={{ textAlign: 'right' }}>
                                     <span className="ccs-lbl">Terpakai</span>
-                                    <span className="ccs-val">{formatCurrency(spent)}</span>
+                                    <span className={`ccs-val ${ob ? 'text-danger' : ''}`}>{formatCurrency(spent)}</span>
                                 </div>
                             </div>
 
@@ -155,7 +155,7 @@ export default function CategoriesPage() {
                                 <div className="cat-card-rem-row">
                                     <span className="cc-percent">{percent.toFixed(1)}%</span>
                                     <span className={`cc-rem ${ob ? 'text-danger' : 'text-success'}`}>
-                                        Sisa: {formatCurrency(rem)}
+                                        {ob ? 'Minus: ' : 'Sisa: '} {formatCurrency(Math.abs(rem))}
                                     </span>
                                 </div>
                             </div>
